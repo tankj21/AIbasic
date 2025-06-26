@@ -1,395 +1,584 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-    
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
-    
-            <meta name="viewport" content="width=device-width,
-                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-            <style>
-                #map_91b94387fb7fe0378814e12f4e924c20 {
-                    position: relative;
-                    width: 100.0%;
-                    height: 100.0%;
-                    left: 0.0%;
-                    top: 0.0%;
-                }
-                .leaflet-container { font-size: 1rem; }
-            </style>
-
-            <style>html, body {
-                width: 100%;
-                height: 100%;
-                margin: 0;
-                padding: 0;
-            }
-            </style>
-
-            <style>#map {
-                position:absolute;
-                top:0;
-                bottom:0;
-                right:0;
-                left:0;
-                }
-            </style>
-
-            <script>
-                L_NO_TOUCH = false;
-                L_DISABLE_3D = false;
-            </script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人力車ナビ - RickshawNav</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .sidebar {
+            width: 350px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .app-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .app-title h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .app-title p {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .control-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .control-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .input-group select,
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .route-info {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .metric:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-label {
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .metric-value {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+        
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .tourist-spots {
+            margin-top: 15px;
+        }
+        
+        .spot {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .spot:last-child {
+            border-bottom: none;
+        }
+        
+        .spot-icon {
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            border-radius: 50%;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .difficulty-easy { background-color: #4CAF50; }
+        .difficulty-medium { background-color: #FF9800; }
+        .difficulty-hard { background-color: #F44336; }
+        
+        .status-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+    </style>
 </head>
 <body>
-    
-    
-            <div class="folium-map" id="map_91b94387fb7fe0378814e12f4e924c20" ></div>
+    <div class="app-container">
+        <div class="sidebar">
+            <div class="app-title">
+                <h1>🛺 RickshawNav</h1>
+                <p>人力車専用ナビゲーション</p>
+            </div>
+            
+            <div class="control-section">
+                <h3>📍 出発・到着地点</h3>
+                <div class="input-group">
+                    <label for="start">出発地点</label>
+                    <select id="start">
+                        <option value="asakusa">浅草雷門</option>
+                        <option value="ueno">上野駅</option>
+                        <option value="tokyo-station">東京駅</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="end">到着地点</label>
+                    <select id="end">
+                        <option value="skytree">東京スカイツリー</option>
+                        <option value="imperial">皇居</option>
+                        <option value="ginza">銀座</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="control-section">
+                <h3>⚙️ ルート設定</h3>
+                <div class="input-group">
+                    <label for="priority">優先設定</label>
+                    <select id="priority">
+                        <option value="tourist">観光地重視</option>
+                        <option value="easy">楽なルート</option>
+                        <option value="fast">最短時間</option>
+                        <option value="safe">安全重視</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="passenger-weight">乗客重量 (kg)</label>
+                    <input type="number" id="passenger-weight" value="70" min="40" max="120">
+                </div>
+            </div>
+            
+            <button class="btn" onclick="calculateRoute()">🗺️ ルート計算</button>
+            
+            <div class="route-info" id="route-info" style="display: none;">
+                <h3>📊 ルート情報</h3>
+                <div class="metric">
+                    <span class="metric-label">総距離</span>
+                    <span class="metric-value" id="total-distance">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">推定時間</span>
+                    <span class="metric-value" id="estimated-time">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">体力消費度</span>
+                    <span class="metric-value" id="effort-level">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">観光スポット</span>
+                    <span class="metric-value" id="tourist-count">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">安全度</span>
+                    <span class="metric-value" id="safety-level">-</span>
+                </div>
+                
+                <div class="tourist-spots" id="tourist-spots">
+                    <h4>🎯 経由観光地</h4>
+                </div>
+            </div>
+        </div>
         
-</body>
-<script>
-    
-    
-            var map_91b94387fb7fe0378814e12f4e924c20 = L.map(
-                "map_91b94387fb7fe0378814e12f4e924c20",
-                {
-                    center: [35.7148, 139.7967],
-                    crs: L.CRS.EPSG3857,
-                    ...{
-  "zoom": 16,
-  "zoomControl": true,
-  "preferCanvas": false,
-}
+        <div class="map-container">
+            <div class="status-indicator" id="status">
+                マップ初期化中...
+            </div>
+            <div id="map"></div>
+        </div>
+    </div>
 
+    <script>
+        // 東京の主要地点データ
+        const locations = {
+            asakusa: { lat: 35.7101, lng: 139.7967, name: "浅草雷門", elevation: 5 },
+            ueno: { lat: 35.7136, lng: 139.7771, name: "上野駅", elevation: 20 },
+            "tokyo-station": { lat: 35.6812, lng: 139.7671, name: "東京駅", elevation: 6 },
+            skytree: { lat: 35.7101, lng: 139.8107, name: "東京スカイツリー", elevation: 8 },
+            imperial: { lat: 35.6852, lng: 139.7528, name: "皇居", elevation: 15 },
+            ginza: { lat: 35.6762, lng: 139.7653, name: "銀座", elevation: 10 }
+        };
+
+        // 観光スポットデータ
+        const touristSpots = [
+            { lat: 35.7148, lng: 139.7967, name: "浅草寺", difficulty: "easy", time: 15 },
+            { lat: 35.7138, lng: 139.7753, name: "上野公園", difficulty: "easy", time: 20 },
+            { lat: 35.6581, lng: 139.7414, name: "東京タワー", difficulty: "medium", time: 10 },
+            { lat: 35.6796, lng: 139.7699, name: "日比谷公園", difficulty: "easy", time: 10 },
+            { lat: 35.6833, lng: 139.7593, name: "丸の内", difficulty: "medium", time: 5 },
+            { lat: 35.7056, lng: 139.7619, name: "神田明神", difficulty: "hard", time: 15 }
+        ];
+
+        let map;
+        let routeLayer;
+        let markers = [];
+
+        // マップ初期化
+        function initMap() {
+            map = L.map('map').setView([35.6895, 139.6917], 12);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // 観光スポットマーカーを追加
+            touristSpots.forEach((spot, index) => {
+                const icon = L.divIcon({
+                    html: `<div style="background: ${getDifficultyColor(spot.difficulty)}; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${index + 1}</div>`,
+                    className: 'custom-div-icon',
+                    iconSize: [25, 25],
+                    iconAnchor: [12, 12]
+                });
+                
+                L.marker([spot.lat, spot.lng], { icon: icon })
+                    .bindPopup(`<b>${spot.name}</b><br>難易度: ${getDifficultyText(spot.difficulty)}<br>滞在時間: ${spot.time}分`)
+                    .addTo(map);
+            });
+
+            document.getElementById('status').textContent = 'マップ準備完了';
+        }
+
+        function getDifficultyColor(difficulty) {
+            const colors = { easy: '#4CAF50', medium: '#FF9800', hard: '#F44336' };
+            return colors[difficulty] || '#666';
+        }
+
+        function getDifficultyText(difficulty) {
+            const texts = { easy: '易しい', medium: '普通', hard: '困難' };
+            return texts[difficulty] || '不明';
+        }
+
+        // A*アルゴリズムを簡略化したルート計算
+        function calculateRoute() {
+            const start = document.getElementById('start').value;
+            const end = document.getElementById('end').value;
+            const priority = document.getElementById('priority').value;
+            const passengerWeight = parseInt(document.getElementById('passenger-weight').value);
+
+            if (start === end) {
+                alert('出発地点と到着地点が同じです。');
+                return;
+            }
+
+            document.getElementById('status').textContent = 'ルート計算中...';
+
+            // 現在のルートをクリア
+            if (routeLayer) {
+                map.removeLayer(routeLayer);
+            }
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+
+            setTimeout(() => {
+                const route = generateOptimalRoute(start, end, priority, passengerWeight);
+                displayRoute(route);
+                updateRouteInfo(route);
+                document.getElementById('status').textContent = 'ルート表示完了';
+            }, 1500);
+        }
+
+        function generateOptimalRoute(startKey, endKey, priority, weight) {
+            const startLoc = locations[startKey];
+            const endLoc = locations[endKey];
+            
+            // 基本距離計算
+            const directDistance = calculateDistance(startLoc, endLoc);
+            
+            // 優先度に基づく経由地選択
+            let waypoints = [];
+            let selectedSpots = [];
+            
+            if (priority === 'tourist') {
+                // 観光地を多く含むルート
+                selectedSpots = touristSpots
+                    .filter(spot => isOnRoute(startLoc, endLoc, spot))
+                    .sort((a, b) => a.difficulty === 'easy' ? -1 : 1)
+                    .slice(0, 3);
+            } else if (priority === 'easy') {
+                // 平坦なルートを選択
+                selectedSpots = touristSpots
+                    .filter(spot => spot.difficulty === 'easy' && isOnRoute(startLoc, endLoc, spot))
+                    .slice(0, 2);
+            } else if (priority === 'safe') {
+                // 安全なルートを選択
+                selectedSpots = touristSpots
+                    .filter(spot => spot.difficulty !== 'hard')
+                    .slice(0, 2);
+            }
+
+            waypoints = [startLoc, ...selectedSpots, endLoc];
+            
+            // ルート最適化（A*アルゴリズムの簡略版）
+            const optimizedRoute = optimizeRoute(waypoints, priority, weight);
+            
+            return {
+                waypoints: optimizedRoute,
+                distance: calculateTotalDistance(optimizedRoute),
+                estimatedTime: calculateEstimatedTime(optimizedRoute, weight, priority),
+                effortLevel: calculateEffortLevel(optimizedRoute, weight),
+                touristSpots: selectedSpots,
+                safetyLevel: calculateSafetyLevel(optimizedRoute, priority)
+            };
+        }
+
+        function isOnRoute(start, end, point) {
+            // 出発地と到着地を結ぶ線から一定距離内にあるかチェック
+            const threshold = 0.02; // 約2km
+            const distanceToLine = pointToLineDistance(start, end, point);
+            return distanceToLine < threshold;
+        }
+
+        function pointToLineDistance(start, end, point) {
+            // 点と線分の距離を計算（簡略版）
+            const A = point.lat - start.lat;
+            const B = point.lng - start.lng;
+            const C = end.lat - start.lat;
+            const D = end.lng - start.lng;
+            
+            const dot = A * C + B * D;
+            const lenSq = C * C + D * D;
+            
+            if (lenSq === 0) return Math.sqrt(A * A + B * B);
+            
+            const param = dot / lenSq;
+            let xx, yy;
+            
+            if (param < 0) {
+                xx = start.lat;
+                yy = start.lng;
+            } else if (param > 1) {
+                xx = end.lat;
+                yy = end.lng;
+            } else {
+                xx = start.lat + param * C;
+                yy = start.lng + param * D;
+            }
+            
+            const dx = point.lat - xx;
+            const dy = point.lng - yy;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        function optimizeRoute(waypoints, priority, weight) {
+            // A*アルゴリズムの簡略実装
+            // 実際には道路の勾配、交通量、路面状況などを考慮
+            return waypoints.sort((a, b) => {
+                if (priority === 'fast') {
+                    return 0; // 直線ルート
+                } else if (priority === 'easy') {
+                    return (a.elevation || 0) - (b.elevation || 0);
                 }
-            );
+                return 0;
+            });
+        }
 
+        function calculateDistance(loc1, loc2) {
+            const R = 6371; // 地球の半径（km）
+            const dLat = (loc2.lat - loc1.lat) * Math.PI / 180;
+            const dLng = (loc2.lng - loc1.lng) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                     Math.cos(loc1.lat * Math.PI / 180) * Math.cos(loc2.lat * Math.PI / 180) *
+                     Math.sin(dLng/2) * Math.sin(dLng/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function calculateTotalDistance(waypoints) {
+            let total = 0;
+            for (let i = 0; i < waypoints.length - 1; i++) {
+                total += calculateDistance(waypoints[i], waypoints[i + 1]);
+            }
+            return total;
+        }
+
+        function calculateEstimatedTime(waypoints, weight, priority) {
+            const distance = calculateTotalDistance(waypoints);
+            let baseSpeed = 8; // km/h（人力車の平均速度）
             
-
-        
-    
-            var tile_layer_bf8f2b91646a8ae5e910cd7a84d0091f = L.tileLayer(
-                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                {
-  "minZoom": 0,
-  "maxZoom": 19,
-  "maxNativeZoom": 19,
-  "noWrap": false,
-  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
-  "subdomains": "abc",
-  "detectRetina": false,
-  "tms": false,
-  "opacity": 1,
-}
-
-            );
-        
-    
-            tile_layer_bf8f2b91646a8ae5e910cd7a84d0091f.addTo(map_91b94387fb7fe0378814e12f4e924c20);
-        
-    
-            var marker_ded74b6086486afbd9e5abd880fb8c71 = L.marker(
-                [35.7148, 139.7967],
-                {
-}
-            ).addTo(map_91b94387fb7fe0378814e12f4e924c20);
-        
-    
-            var icon_90bd0ee482cb2d7bbd62babc8752cc88 = L.AwesomeMarkers.icon(
-                {
-  "markerColor": "blue",
-  "iconColor": "white",
-  "icon": "info-sign",
-  "prefix": "glyphicon",
-  "extraClasses": "fa-rotate-0",
-}
-            );
-        
-    
-        var popup_fd66ee4f472c14cc2e6432d53d54983e = L.popup({
-  "maxWidth": "100%",
-});
-
-        
+            // 重量による調整
+            const weightFactor = 1 + (weight - 70) * 0.005;
             
-                var html_377dec05056665b44945f4a33ee344c3 = $(`<div id="html_377dec05056665b44945f4a33ee344c3" style="width: 100.0%; height: 100.0%;">浅草寺<br>カテゴリ: 寺社<br>人力車適性: ★5</div>`)[0];
-                popup_fd66ee4f472c14cc2e6432d53d54983e.setContent(html_377dec05056665b44945f4a33ee344c3);
+            // 優先度による調整
+            let priorityFactor = 1;
+            if (priority === 'tourist') priorityFactor = 1.5; // 観光地で時間がかかる
+            if (priority === 'easy') priorityFactor = 1.2; // ゆっくり走行
             
-        
+            const adjustedSpeed = baseSpeed / (weightFactor * priorityFactor);
+            return (distance / adjustedSpeed) * 60; // 分単位
+        }
 
-        marker_ded74b6086486afbd9e5abd880fb8c71.bindPopup(popup_fd66ee4f472c14cc2e6432d53d54983e)
-        ;
-
-        
-    
-    
-            marker_ded74b6086486afbd9e5abd880fb8c71.bindTooltip(
-                `<div>
-                     浅草寺
-                 </div>`,
-                {
-  "sticky": true,
-}
-            );
-        
-    
-                marker_ded74b6086486afbd9e5abd880fb8c71.setIcon(icon_90bd0ee482cb2d7bbd62babc8752cc88);
+        function calculateEffortLevel(waypoints, weight) {
+            const distance = calculateTotalDistance(waypoints);
+            const elevation = waypoints.reduce((sum, wp) => sum + (wp.elevation || 0), 0);
+            const weightFactor = weight / 70;
             
-    
-            var marker_0022dc6d9a69e48d00896295fdcf0a07 = L.marker(
-                [35.7101, 139.7966],
-                {
-}
-            ).addTo(map_91b94387fb7fe0378814e12f4e924c20);
-        
-    
-            var icon_26014092267217d390b6734a90943db6 = L.AwesomeMarkers.icon(
-                {
-  "markerColor": "blue",
-  "iconColor": "white",
-  "icon": "info-sign",
-  "prefix": "glyphicon",
-  "extraClasses": "fa-rotate-0",
-}
-            );
-        
-    
-        var popup_743e1a8fda013e76776628a29e5755e2 = L.popup({
-  "maxWidth": "100%",
-});
-
-        
+            const effort = (distance * 10 + elevation * 2) * weightFactor;
             
-                var html_35e58232abb751a254a03ab3eeae799d = $(`<div id="html_35e58232abb751a254a03ab3eeae799d" style="width: 100.0%; height: 100.0%;">雷門<br>カテゴリ: 門<br>人力車適性: ★5</div>`)[0];
-                popup_743e1a8fda013e76776628a29e5755e2.setContent(html_35e58232abb751a254a03ab3eeae799d);
-            
-        
+            if (effort < 50) return "軽い";
+            if (effort < 100) return "普通";
+            if (effort < 150) return "重い";
+            return "非常に重い";
+        }
 
-        marker_0022dc6d9a69e48d00896295fdcf0a07.bindPopup(popup_743e1a8fda013e76776628a29e5755e2)
-        ;
-
-        
-    
-    
-            marker_0022dc6d9a69e48d00896295fdcf0a07.bindTooltip(
-                `<div>
-                     雷門
-                 </div>`,
-                {
-  "sticky": true,
-}
-            );
-        
-    
-                marker_0022dc6d9a69e48d00896295fdcf0a07.setIcon(icon_26014092267217d390b6734a90943db6);
+        function calculateSafetyLevel(waypoints, priority) {
+            let safety = 85; // 基本安全度
             
-    
-            var marker_bc8a611ff6434aa9dbe67fee375d96de = L.marker(
-                [35.7143, 139.7946],
-                {
-}
-            ).addTo(map_91b94387fb7fe0378814e12f4e924c20);
-        
-    
-            var icon_cd9310ce8dc86ac83449266b2707a37e = L.AwesomeMarkers.icon(
-                {
-  "markerColor": "gray",
-  "iconColor": "white",
-  "icon": "info-sign",
-  "prefix": "glyphicon",
-  "extraClasses": "fa-rotate-0",
-}
-            );
-        
-    
-        var popup_0b391789079db0eea63c0dfe7cdc0871 = L.popup({
-  "maxWidth": "100%",
-});
-
-        
+            if (priority === 'safe') safety += 10;
+            if (priority === 'fast') safety -= 5;
             
-                var html_18ee42915ce34210793160be7fc213ac = $(`<div id="html_18ee42915ce34210793160be7fc213ac" style="width: 100.0%; height: 100.0%;">花やしき<br>カテゴリ: 遊園地<br>人力車適性: ★3</div>`)[0];
-                popup_0b391789079db0eea63c0dfe7cdc0871.setContent(html_18ee42915ce34210793160be7fc213ac);
+            // ランダム要素（実際は道路状況データを使用）
+            safety += Math.random() * 10 - 5;
             
-        
+            return Math.round(Math.max(70, Math.min(100, safety)));
+        }
 
-        marker_bc8a611ff6434aa9dbe67fee375d96de.bindPopup(popup_0b391789079db0eea63c0dfe7cdc0871)
-        ;
-
-        
-    
-    
-            marker_bc8a611ff6434aa9dbe67fee375d96de.bindTooltip(
-                `<div>
-                     花やしき
-                 </div>`,
-                {
-  "sticky": true,
-}
-            );
-        
-    
-                marker_bc8a611ff6434aa9dbe67fee375d96de.setIcon(icon_cd9310ce8dc86ac83449266b2707a37e);
+        function displayRoute(route) {
+            const coordinates = route.waypoints.map(wp => [wp.lat, wp.lng]);
             
-    
-            var marker_7f8380b6110ca8d58527f6b055df0d90 = L.marker(
-                [35.7112, 139.7965],
-                {
-}
-            ).addTo(map_91b94387fb7fe0378814e12f4e924c20);
-        
-    
-            var icon_64a4372015787305eca462fec6dead8a = L.AwesomeMarkers.icon(
-                {
-  "markerColor": "gray",
-  "iconColor": "white",
-  "icon": "info-sign",
-  "prefix": "glyphicon",
-  "extraClasses": "fa-rotate-0",
-}
-            );
-        
-    
-        var popup_8e4892d597290b8330fdc30896740a54 = L.popup({
-  "maxWidth": "100%",
-});
-
-        
+            routeLayer = L.polyline(coordinates, {
+                color: '#667eea',
+                weight: 6,
+                opacity: 0.8,
+                dashArray: '10, 5'
+            }).addTo(map);
             
-                var html_16bf0b144cce4edcd47f728a77927f93 = $(`<div id="html_16bf0b144cce4edcd47f728a77927f93" style="width: 100.0%; height: 100.0%;">仲見世通り<br>カテゴリ: 商店街<br>人力車適性: ★2</div>`)[0];
-                popup_8e4892d597290b8330fdc30896740a54.setContent(html_16bf0b144cce4edcd47f728a77927f93);
+            // 開始・終了マーカー
+            const startIcon = L.divIcon({
+                html: '<div style="background: #4CAF50; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.3);">S</div>',
+                className: 'custom-div-icon',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
             
-        
-
-        marker_7f8380b6110ca8d58527f6b055df0d90.bindPopup(popup_8e4892d597290b8330fdc30896740a54)
-        ;
-
-        
-    
-    
-            marker_7f8380b6110ca8d58527f6b055df0d90.bindTooltip(
-                `<div>
-                     仲見世通り
-                 </div>`,
-                {
-  "sticky": true,
-}
-            );
-        
-    
-                marker_7f8380b6110ca8d58527f6b055df0d90.setIcon(icon_64a4372015787305eca462fec6dead8a);
+            const endIcon = L.divIcon({
+                html: '<div style="background: #F44336; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.3);">G</div>',
+                className: 'custom-div-icon',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
             
-    
-            var marker_82b98dc374e7732848bb887de63e5500 = L.marker(
-                [35.7123, 139.7987],
-                {
-}
-            ).addTo(map_91b94387fb7fe0378814e12f4e924c20);
-        
-    
-            var icon_150d10be4bfec1c1b91b962975a9364e = L.AwesomeMarkers.icon(
-                {
-  "markerColor": "blue",
-  "iconColor": "white",
-  "icon": "info-sign",
-  "prefix": "glyphicon",
-  "extraClasses": "fa-rotate-0",
-}
-            );
-        
-    
-        var popup_bde44f3e498901520cbdafd4029a01dd = L.popup({
-  "maxWidth": "100%",
-});
-
-        
+            markers.push(L.marker([coordinates[0][0], coordinates[0][1]], { icon: startIcon }).addTo(map));
+            markers.push(L.marker([coordinates[coordinates.length-1][0], coordinates[coordinates.length-1][1]], { icon: endIcon }).addTo(map));
             
-                var html_5ff39a2510130c4c033560072daf7aae = $(`<div id="html_5ff39a2510130c4c033560072daf7aae" style="width: 100.0%; height: 100.0%;">隅田公園<br>カテゴリ: 公園<br>人力車適性: ★4</div>`)[0];
-                popup_bde44f3e498901520cbdafd4029a01dd.setContent(html_5ff39a2510130c4c033560072daf7aae);
-            
-        
+            // マップをルートに合わせて調整
+            map.fitBounds(routeLayer.getBounds(), { padding: [20, 20] });
+        }
 
-        marker_82b98dc374e7732848bb887de63e5500.bindPopup(popup_bde44f3e498901520cbdafd4029a01dd)
-        ;
-
-        
-    
-    
-            marker_82b98dc374e7732848bb887de63e5500.bindTooltip(
-                `<div>
-                     隅田公園
-                 </div>`,
-                {
-  "sticky": true,
-}
-            );
-        
-    
-                marker_82b98dc374e7732848bb887de63e5500.setIcon(icon_150d10be4bfec1c1b91b962975a9364e);
+        function updateRouteInfo(route) {
+            document.getElementById('total-distance').textContent = `${route.distance.toFixed(1)} km`;
+            document.getElementById('estimated-time').textContent = `${Math.round(route.estimatedTime)} 分`;
+            document.getElementById('effort-level').textContent = route.effortLevel;
+            document.getElementById('tourist-count').textContent = `${route.touristSpots.length} ヶ所`;
+            document.getElementById('safety-level').textContent = `${route.safetyLevel}%`;
             
-    
-            var marker_8bf957c359215bbcaf9f40fec3c4abe8 = L.marker(
-                [35.7104, 139.7969],
-                {
-}
-            ).addTo(map_91b94387fb7fe0378814e12f4e924c20);
-        
-    
-            var icon_0c38aeaf4a75945be309ba7a4e1e8d41 = L.AwesomeMarkers.icon(
-                {
-  "markerColor": "blue",
-  "iconColor": "white",
-  "icon": "info-sign",
-  "prefix": "glyphicon",
-  "extraClasses": "fa-rotate-0",
-}
-            );
-        
-    
-        var popup_ba552ca3ee2d3801cd832c2a9e79fc01 = L.popup({
-  "maxWidth": "100%",
-});
-
-        
+            // 観光スポット一覧を表示
+            const spotsContainer = document.getElementById('tourist-spots');
+            spotsContainer.innerHTML = '<h4>🎯 経由観光地</h4>';
             
-                var html_88799cb9a76dcb14001edc7bfe35cb97 = $(`<div id="html_88799cb9a76dcb14001edc7bfe35cb97" style="width: 100.0%; height: 100.0%;">浅草文化観光センター<br>カテゴリ: 施設<br>人力車適性: ★4</div>`)[0];
-                popup_ba552ca3ee2d3801cd832c2a9e79fc01.setContent(html_88799cb9a76dcb14001edc7bfe35cb97);
+            route.touristSpots.forEach((spot, index) => {
+                const spotDiv = document.createElement('div');
+                spotDiv.className = 'spot';
+                spotDiv.innerHTML = `
+                    <div class="spot-icon difficulty-${spot.difficulty}">${index + 1}</div>
+                    <div>
+                        <strong>${spot.name}</strong><br>
+                        <small>滞在時間: ${spot.time}分 | 難易度: ${getDifficultyText(spot.difficulty)}</small>
+                    </div>
+                `;
+                spotsContainer.appendChild(spotDiv);
+            });
             
-        
+            document.getElementById('route-info').style.display = 'block';
+        }
 
-        marker_8bf957c359215bbcaf9f40fec3c4abe8.bindPopup(popup_ba552ca3ee2d3801cd832c2a9e79fc01)
-        ;
-
-        
-    
-    
-            marker_8bf957c359215bbcaf9f40fec3c4abe8.bindTooltip(
-                `<div>
-                     浅草文化観光センター
-                 </div>`,
-                {
-  "sticky": true,
-}
-            );
-        
-    
-                marker_8bf957c359215bbcaf9f40fec3c4abe8.setIcon(icon_0c38aeaf4a75945be309ba7a4e1e8d41);
-            
-    
-            var poly_line_11c9ff4982f1ee870cd9f70a1b1f153f = L.polyline(
-                [[35.7101, 139.7966], [35.7112, 139.7965], [35.7148, 139.7967], [35.7123, 139.7987]],
-                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 4}
-            ).addTo(map_91b94387fb7fe0378814e12f4e924c20);
-        
-</script>
+        // ページ読み込み時にマップを初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            initMap();
+        });
+    </script>
+</body>
 </html>
