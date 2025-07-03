@@ -86,6 +86,33 @@ const spotsDatabase = [
         lng: 139.7740,
         sceneryScore: 6,
         description: '江戸時代からの歴史ある橋'
+    },
+    {
+        id: 9,
+        name: '雷門',
+        type: '観光名所',
+        lat: 35.706678,
+        lng: 139.791125,
+        sceneryScore: 9,
+        description: '浅草寺の入り口にある大きな門'
+    },
+    {
+        id:10,
+        name: '花やしき',
+        type: '遊園地',
+        lat: 35.715461,
+        lng: 139.794678,
+        sceneryScore: 9,
+        description: '日本最古の遊園地、レトロな雰囲気が魅力'
+    },
+    {
+        id: 11,
+        name: '浅草演芸ホール',
+        type: '劇場',
+        lat: 35.7134959,
+        lng: 139.7929631,
+        sceneryScore: 8,
+        description: '落語や漫才などの伝統芸能を楽しめる場所'
     }
 ];
 
