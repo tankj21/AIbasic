@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人力車ナビ - Google Maps版</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="header">
+        <h1>🚲 人力車ナビ</h1>
+        <p>風情ある道を案内します - Google Maps版</p>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <div class="input-group">
+                <label for="start">出発地</label>
+                <div class="autocomplete-container">
+                    <input type="text" id="start" placeholder="例: 浅草寺" />
+                    <div class="autocomplete-suggestions" id="startSuggestions"></div>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="destination">目的地</label>
+                <div class="autocomplete-container">
+                    <input type="text" id="destination" placeholder="例: スカイツリー" />
+                    <div class="autocomplete-suggestions" id="destinationSuggestions"></div>
+                </div>
+            </div>
+            
+            <button class="btn" id="findRoute" onclick="findRoute()">
+                🔍 ルートを探す
+            </button>
+            
+            <div class="preferences">
+                <h3>⚙️ 設定</h3>
+                
+                <div class="slider-group">
+                    <label>
+                        <span>坂道回避</span>
+                        <span id="gradientValue">50</span>
+                    </label>
+                    <input type="range" class="slider" id="gradientWeight" 
+                           min="0" max="100" value="50" 
+                           oninput="updateSliderValue('gradient', this.value)">
+                </div>
+                
+                <div class="slider-group">
+                    <label>
+                        <span>景観重視</span>
+                        <span id="sceneryValue">70</span>
+                    </label>
+                    <input type="range" class="slider" id="sceneryWeight" 
+                           min="0" max="100" value="70"
+                           oninput="updateSliderValue('scenery', this.value)">
+                </div>
+                
+                <div class="slider-group">
+                    <label>
+                        <span>観光地経由</span>
+                        <span id="touristValue">60</span>
+                    </label>
+                    <input type="range" class="slider" id="touristWeight" 
+                           min="0" max="100" value="60"
+                           oninput="updateSliderValue('tourist', this.value)">
+                </div>
+            </div>
+            
+            <div class="spots-section">
+                <h3>🏛️ おすすめスポット</h3>
+                <div id="spotsList"></div>
+            </div>
+            
+            <div class="route-info" id="routeInfo" style="display: none;">
+                <h3>📍 ルート情報</h3>
+                <div class="route-stats">
+                    <div class="stat">
+                        <div class="stat-value" id="distance">-</div>
+                        <div class="stat-label">距離</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="duration">-</div>
+                        <div class="stat-label">時間</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="elevation">-</div>
+                        <div class="stat-label">高低差</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="sceneryScore">-</div>
+                        <div class="stat-label">景観スコア</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="map"></div>
+    </div>
+
+    <script src="script.js"></script>
+    
+    <!-- Google Maps API の読み込み -->
+    <!-- 注意: YOUR_API_KEY_HEREを実際のAPIキーに置き換えてください -->
+    <script src="config.js"></script>
+
+    <script>
+        function loadGoogleMapsAPI() {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_API_KEY}&callback=initMap&libraries=geometry`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+
+        window.addEventListener('load', loadGoogleMapsAPI);
+
+    </script>>
+</body>
+</html>
